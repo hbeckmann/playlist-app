@@ -7,13 +7,19 @@ var path = require('path');
 var youtube = require('youtube-search');
 var ytConfig = {
     maxResults: 8,
-    key:,
+    key: "",
     type: 'video'
 };
 
 //Database
 var mongoose = require('mongoose');
-var db = mongoose.connect('mongodb://localhost/playlistAPI');
+var db;
+if(process.env.ENV === 'Test'){
+  db = mongoose.connect('mongodb://localhost/playlistAPI_test');
+}else{
+  db = mongoose.connect('mongodb://localhost/playlistAPI');
+};
+
 var playlist = require('./source/models/playlistAPI.js');
 
 //Routes
@@ -36,3 +42,5 @@ console.log('Server Started on port ' + port);
 //Routing*****
 
 app.use('/', playlistRouter);
+
+module.exports = app;

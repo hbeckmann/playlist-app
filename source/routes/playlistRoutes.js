@@ -2,6 +2,7 @@ var express = require('express');
 
 var routes = function(playlist, youtube, ytConfig){
 
+  var playlistController = require('../controllers/playlistController.js')(playlist);
   var playlistRouter = express.Router();
   playlistRouter.get('/', function(req, res){
     res.sendFile(path.join(__dirname + '/source/index.html'));
@@ -22,37 +23,40 @@ var routes = function(playlist, youtube, ytConfig){
   });
 
   playlistRouter.route('/playlist')
-  .post( function (req,res){
-    var userPlaylist = new playlist({owner: req.body.owner, songs: req.body.songs})
-    userPlaylist.save(function(err) {
-      if (err) return err;
-      res.send(userPlaylist);
+  .post(playlistController.post)
+  .get(playlistController.get);
+
+  playlistRouter.use('/playlist/:playlistId', function(req, res, next){
+    playlist.findById(req.params.playlistId, function (err, lists){
+      if(err) {
+        return console.log(err);
+      } else if (lists){
+        console.log(lists);
+        req.lists = lists;
+        next();
+      } else {
+        res.status(404).send('no song found');
+      }
     })
   })
-
-  .get(function (req,res){
-    playlist.find(function (err, lists){
-      if(err) return console.log(err);
-      console.log(lists);
-    })
-  });
 
   playlistRouter.route('/playlist/:playlistId')
   .put(function (req, res){
-    playlist.findById(req.params.playlistId, function (err, lists){
-      list.owner = req.body.owner;
-      list.songs = req.body.songs;
-
-      if(err) return console.log(err);
-      console.log(lists);
+      req.lists.owner = req.body.owner;
+      req.lists.songs = req.body.songs;
+      req.lists.save(function(err){
+        if(err) {
+          res.send(err);
+          console.log(err);
+        }else{
+          res.json(req.lists)
+        }
+      console.log(req.lists);
     })
   })
 
   .get(function (req,res){
-    playlist.findById(req.params.playlistId, function (err, lists){
-      if(err) return console.log(err);
-      console.log(lists);
-    })
+    res.json(req.lists);
   })
 
   .patch(function (req, res){
@@ -70,12 +74,20 @@ var routes = function(playlist, youtube, ytConfig){
         res.json(req.lists)
       }
     })
-  });
+  })
+
+  .delete(function(req, res){
+    req.lists.remove(function(err){
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(204).send('removed!');
+      }
+    });
+  })
 
 
   return playlistRouter;
-
-
 };
 
 module.exports = routes;
