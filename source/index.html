@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html ng-app='playlist'>
+  <head>
+    <meta charset="utf-8">
+    <title>Playlist App</title>
+    <script src="angular/angular.js"></script>
+    <script src="scripts/app.js"></script>
+    <link href="styles/desktop.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body ng-controller='playlistController as play'>
+    <p>{{play.test}} Test</p>
+    <input autofocus placeholder="Enter an Artist or Song" class="searchBar" ng-model="play.searchTerm"> </input><button class="searchButton clear" ng-click="play.searchTermCall(play.searchTerm);">Go!</button>
+    <div class="songHolder clear" ng-repeat="x in play.results">{{x.title}}<img class="picPreview" ng-src="{{x.thumbnails.medium.url}}" /><div ng-click="play.saveSong(x)">+</div></div>
+  </body>
+</html>

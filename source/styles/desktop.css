@@ -1,0 +1,27 @@
+.searchBar{
+  margin: auto;
+  width: 50%;
+  float: left;
+  height: 25px;
+  margin-left: 25px;
+  margin-bottom: 25px;
+}
+
+.searchButton{
+  height: 31px;
+  width: 60px;
+  margin-left: 5px;
+  float:left;
+}
+
+.picPreview{
+  width: 200px;
+}
+
+.songHolder{
+  float: left;
+}
+
+.clear{
+  clear: right;
+}
